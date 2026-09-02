@@ -1,0 +1,96 @@
+<header class="mfe-header">
+  <div class="nav-wrapper" [class.active]="mobileOpen()">
+    <nav class="vwr-two-row" [attr.aria-expanded]="mobileOpen()">
+      <div class="nav-hamburger">
+        <button
+          type="button"
+          [attr.aria-expanded]="mobileOpen()"
+          [attr.aria-label]="mobileOpen() ? 'Close navigation' : 'Open navigation'"
+          (click)="toggleMobileMenu()"
+        >
+          <span class="nav-hamburger-icon"></span>
+        </button>
+      </div>
+
+      <div class="nav-brand">
+        <a [href]="absoluteHref('/us/en')">
+          <img
+            [src]="absoluteHref('/media_1edca0f44c1b0baad1c16408809c939d521427a4f.svg')"
+            alt="VWR, part of Avantor"
+            width="200"
+            height="47"
+          />
+        </a>
+      </div>
+
+      <form class="nav-search-bar" role="search" [attr.action]="searchAction()" method="get">
+        <div class="nav-search-bar__box">
+          <input
+            type="search"
+            name="q"
+            class="nav-search-bar__input"
+            placeholder="Search by keyword, supplier, or part number"
+            aria-label="Search"
+          />
+          <button type="submit" class="nav-search-bar__submit" aria-label="Search"></button>
+        </div>
+        <button type="button" class="nav-search-bar__ai" aria-label="Ask AI">
+          <span class="nav-search-bar__ai-icon" aria-hidden="true"></span>Ask AI
+        </button>
+      </form>
+
+      <div class="nav-utility">
+        <div class="nav-auth-links">
+          <a [href]="absoluteHref('/us/en/login')">Login</a>
+          <span class="nav-auth-links__sep">/</span>
+          <a [href]="absoluteHref('/us/en/registration-account-type')">Register</a>
+        </div>
+        <button type="button" class="nav-account" aria-label="Account"></button>
+        <button type="button" class="nav-country" aria-label="Country: United States">
+          <span class="nav-country__flag" aria-hidden="true"></span>
+          <span class="nav-country__label">United States</span>
+          <span class="nav-country__caret" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="nav-sections">
+        <ul>
+          @for (section of navSections; track section.label) {
+            <li class="nav-drop" [class.active]="openSectionLabel() === section.label">
+              <p>
+                <a
+                  [href]="absoluteHref(section.href)"
+                  [attr.aria-expanded]="openSectionLabel() === section.label"
+                  (click)="toggleSection(section, $event)"
+                >{{ section.label }}</a>
+              </p>
+              <div class="submenu-wrapper">
+                <div class="submenu-header">
+                  <h5 class="back-link" (click)="closeMegaMenu()">All Categories</h5>
+                  <hr />
+                </div>
+                <h6 class="submenu-title">{{ section.label }}</h6>
+                <div class="submenu-inner">
+                  <div class="submenu-col">
+                    <ul>
+                      @for (item of section.items; track item.href) {
+                        <li><a [href]="absoluteHref(item.href)">{{ item.label }}</a></li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="nav-tools">
+        <a class="nav-order-entry" [href]="absoluteHref('/us/en/my-account/quick-order')">Order Entry</a>
+        <button type="button" class="nav-cart-button" aria-label="Cart"></button>
+        <span class="nav-cart-subtotal">$0.00</span>
+      </div>
+    </nav>
+  </div>
+  <div class="overlay" [class.show]="openSectionLabel() !== null" (click)="closeMegaMenu()"></div>
+</header>

@@ -1,0 +1,464 @@
+/*
+ * Visual/structural clone of https://main--vwr--ynaka-adobe.aem.live's header
+ * (blocks/header/header.css + the "vwr-two-row" layout it builds at runtime).
+ * Ported into Shadow DOM: real custom-property inheritance means var(--spacing-*),
+ * var(--color-brand-*) etc. below resolve to the *host page's* real design tokens
+ * for free when this is actually embedded on the vwr site (custom properties are
+ * inheritable and cross shadow boundaries; only selector matching is scoped by
+ * Shadow DOM). The fallback values here only kick in when there's no host page
+ * defining them (e.g. running this project standalone via `ng serve`).
+ */
+
+:host {
+  display: block;
+  font-family: var(--body-font-family, 'Averta', arial, helvetica, sans-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.mfe-header {
+  --nav-height: var(--nav-height, 64px);
+  position: relative;
+  background-color: var(--background-color, #fff);
+  border-bottom: 1px solid var(--color-neutral-300, #e8e8e8);
+}
+
+nav {
+  box-sizing: border-box;
+  margin: auto;
+  max-width: 1264px;
+  padding: 14px 24px;
+}
+
+nav p {
+  margin: 0;
+  line-height: 1;
+}
+
+/* hamburger (mobile only) */
+.nav-hamburger {
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-hamburger button {
+  height: 22px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.nav-hamburger-icon,
+.nav-hamburger-icon::before,
+.nav-hamburger-icon::after {
+  box-sizing: border-box;
+  display: block;
+  position: relative;
+  width: 20px;
+}
+
+.nav-hamburger-icon::before,
+.nav-hamburger-icon::after {
+  content: '';
+  position: absolute;
+  background: currentcolor;
+}
+
+nav[aria-expanded='false'] .nav-hamburger-icon,
+nav[aria-expanded='false'] .nav-hamburger-icon::before,
+nav[aria-expanded='false'] .nav-hamburger-icon::after {
+  height: 2px;
+  border-radius: 2px;
+  background: currentcolor;
+}
+
+nav[aria-expanded='false'] .nav-hamburger-icon::before { top: -6px; }
+nav[aria-expanded='false'] .nav-hamburger-icon::after { top: 6px; }
+
+nav[aria-expanded='true'] .nav-hamburger-icon { height: 22px; background: transparent; }
+
+nav[aria-expanded='true'] .nav-hamburger-icon::before,
+nav[aria-expanded='true'] .nav-hamburger-icon::after {
+  top: 9px;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+}
+
+nav[aria-expanded='true'] .nav-hamburger-icon::before { transform: rotate(45deg); }
+nav[aria-expanded='true'] .nav-hamburger-icon::after { transform: rotate(-45deg); }
+
+@media (min-width: 900px) {
+  .nav-hamburger { display: none; }
+}
+
+/* brand */
+.nav-brand img {
+  display: block;
+  width: 160px;
+  height: auto;
+}
+
+/* base (mobile) layout: stacked rows */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.nav-sections {
+  flex-basis: 100%;
+  display: none;
+}
+
+nav[aria-expanded='true'] .nav-sections {
+  display: block;
+  order: 10;
+}
+
+.nav-utility { display: none; }
+
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-medium, 16px);
+  margin-left: auto;
+}
+
+.nav-order-entry { display: none; }
+
+.nav-sections ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-sections ul > li {
+  font-weight: 600;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-neutral-300, #e8e8e8);
+}
+
+.nav-sections ul > li > p > a {
+  display: block;
+  text-decoration: none;
+}
+
+.nav-sections ul > li.nav-drop > p::after {
+  content: '\276F';
+  position: absolute;
+  right: 0;
+  top: 10px;
+}
+
+.submenu-wrapper { display: none; }
+.submenu-header, .submenu-title { display: none; }
+
+.nav-drop.active .submenu-wrapper {
+  display: block;
+  padding: 8px 0 4px;
+}
+
+.submenu-inner ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.submenu-inner li {
+  border-bottom: 0;
+  font-weight: 400;
+  padding: 6px 0;
+}
+
+.submenu-inner li > a {
+  text-decoration: none;
+}
+
+.submenu-inner li > a:hover {
+  text-decoration: underline;
+}
+
+/* Desktop: two-row VWR layout */
+@media (min-width: 900px) {
+  .mfe-header { position: relative; }
+
+  nav {
+    display: grid;
+    grid-template:
+      'brand search utility' auto
+      'sections sections actions' auto
+      / auto minmax(320px, 1fr) auto;
+    align-items: center;
+    gap: 14px 32px;
+    padding: 14px 32px;
+  }
+
+  .nav-brand { grid-area: brand; }
+  .nav-brand img { width: 180px; }
+
+  .nav-search-bar { grid-area: search; }
+
+  .nav-utility {
+    grid-area: utility;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .nav-sections {
+    grid-area: sections;
+    flex-basis: auto;
+    display: block;
+  }
+
+  .nav-sections ul {
+    display: flex;
+    gap: 24px;
+  }
+
+  .nav-sections ul > li {
+    border-bottom: 0;
+    padding: 0 var(--spacing-small, 8px);
+    border-radius: 4px;
+    font-weight: 700;
+  }
+
+  .nav-sections ul > li.nav-drop > p::after { content: none; }
+
+  .nav-sections ul > li > p > a {
+    padding: 8px 0;
+  }
+
+  .nav-drop .submenu-wrapper { display: none; }
+
+  .nav-drop.active .submenu-wrapper {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px 32px 32px;
+    background-color: var(--background-color, #fff);
+    border-top: 1px solid var(--color-neutral-300, #e8e8e8);
+    box-shadow: var(--shape-shadow-2, 0 8px 24px rgb(0 0 0 / 12%));
+    z-index: 4;
+  }
+
+  .submenu-inner {
+    max-width: 1264px;
+    margin: 0 auto;
+  }
+
+  .submenu-inner ul {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 280px));
+    gap: 4px 32px;
+  }
+
+  .submenu-inner li > a {
+    display: block;
+    padding: 6px 8px;
+    border-radius: 4px;
+  }
+
+  .submenu-inner li > a:hover {
+    background-color: var(--color-neutral-200, #f5f5f5);
+    text-decoration: underline;
+  }
+
+  .nav-tools {
+    grid-area: actions;
+    justify-self: end;
+  }
+
+  .nav-order-entry { display: inline; }
+}
+
+/* Persistent search bar */
+.nav-search-bar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .nav-search-bar { display: flex; }
+}
+
+.nav-search-bar__box {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  border: 1px solid var(--color-neutral-400, #b9bec4);
+  border-radius: 4px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.nav-search-bar__box:focus-within {
+  border-color: var(--color-brand-500, var(--link-color, rgb(0 100 200)));
+  box-shadow: 0 0 0 1px var(--color-brand-500, var(--link-color, rgb(0 100 200)));
+}
+
+.nav-search-bar__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  padding: 0 14px;
+  font-size: 15px;
+  color: var(--color-neutral-800, #2b2b2b);
+  background: transparent;
+}
+
+.nav-search-bar__input:focus { outline: none; }
+
+.nav-search-bar__submit {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent url('https://main--vwr--ynaka-adobe.aem.live/icons/search.svg') no-repeat center / 20px 20px;
+}
+
+.nav-search-bar__ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-brand-500, var(--link-color, rgb(0 100 200)));
+  border-radius: 20px;
+  background: #fff;
+  color: var(--color-brand-700, var(--link-color, rgb(0 100 200)));
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.nav-search-bar__ai:hover {
+  background: var(--color-brand-500, var(--link-color, rgb(0 100 200)));
+  color: #fff;
+}
+
+.nav-search-bar__ai-icon {
+  width: 16px;
+  height: 16px;
+  background: currentcolor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l1.9 5.6L19.5 9l-5.6 1.9L12 16l-1.9-5.1L4.5 9l5.6-1.4zM19 14l.9 2.6L22.5 18l-2.6.9L19 21l-.9-2.1L15.5 18l2.6-1.4z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Utility cluster */
+.nav-auth-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-auth-links a {
+  color: var(--color-brand-700, var(--link-color, rgb(0 100 200)));
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-auth-links a:hover { text-decoration: underline; }
+.nav-auth-links__sep { color: var(--color-neutral-400, #b9bec4); }
+
+.nav-account {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  padding: 0;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314517e' stroke-width='1.7'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 20c0-4 4-6 8-6s8 2 8 6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.nav-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-brand-700, var(--link-color, rgb(0 100 200)));
+  font-weight: 600;
+}
+
+.nav-country__flag {
+  width: 18px;
+  height: 18px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314517e' stroke-width='1.6'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3c2.5 2.5 2.5 15.5 0 18M12 3c-2.5 2.5-2.5 15.5 0 18'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.nav-country__caret {
+  width: 14px;
+  height: 14px;
+  background: url('https://main--vwr--ynaka-adobe.aem.live/icons/chevron-down.svg') no-repeat center / contain;
+}
+
+/* Bottom-row actions */
+.nav-order-entry {
+  color: var(--color-brand-700, var(--link-color, rgb(0 100 200)));
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nav-order-entry:hover { text-decoration: underline; }
+
+.nav-cart-button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent url('https://main--vwr--ynaka-adobe.aem.live/icons/cart.svg') no-repeat center;
+}
+
+.nav-cart-subtotal {
+  color: var(--color-brand-700, var(--link-color, rgb(0 100 200)));
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Mobile-open state */
+.nav-wrapper.active {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: var(--background-color, #fff);
+  overflow-y: auto;
+}
+
+.overlay {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .overlay.show {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgb(0 0 0 / 50%);
+    z-index: 2;
+  }
+}

@@ -1,0 +1,10 @@
+.hero-fragment {
+  display: block;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+fragment-embed {
+  display: block;
+}

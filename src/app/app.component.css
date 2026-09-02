@@ -1,0 +1,28 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+.note {
+  background: #eef4ff;
+  border: 1px solid #a9c6f5;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+.cors-note {
+  background: #fff8e1;
+  border: 1px solid #f0c869;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+code {
+  background: #f1f1f1;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
